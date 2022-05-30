@@ -1,0 +1,12 @@
+{
+  "name": "dlang_source_code",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "minify": "minify src/index.js > dist/dlang.min.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

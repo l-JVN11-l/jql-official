@@ -1,0 +1,6 @@
+import 'dl:main/database.dlang'
+
+var dbname = 'dog'
+
+// createUnsafeDB(dbname)
+createDocument(dbname, 'helo!')
