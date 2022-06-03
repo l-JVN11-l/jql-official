@@ -49,6 +49,7 @@ class DLang {
         let dbAddPropertyUnsafeCondition_ = (currFunction_ === 'createProperty' && databaseUtils_ === true)
         let dbRemoveDocUnsafeCondition_ = (currFunction_ === 'removeDocument' && databaseUtils_ === true)
         let dbRemove_ = (currFunction_ === 'removeDB' && databaseUtils_ === true)
+        let dbRemovePropertyUnsafeCondition_ = (currFunction_ === 'removeProperty' && databaseUtils_ === true)
         
         if (printCondition_) {
           // print condition
@@ -228,6 +229,43 @@ class DLang {
 
           try {
             fs.unlinkSync(`unsafeDb/${filedata[0]}.json`)
+          } catch (error) {
+            console.error(error)
+          }
+        }
+
+        if (dbRemovePropertyUnsafeCondition_) {
+          let filedata = text.split(', ')
+          let object
+
+          if (variables[filedata[0]]) {
+            filedata[0] = variables[filedata[0]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[1]]) {
+            filedata[1] = variables[filedata[1]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[2]]) {
+            filedata[2] = variables[filedata[2]]
+          } else {
+            this.noHandler()
+          }
+
+          try {
+            object = JSON.parse(fs.readFileSync(`unsafeDb/${filedata[0]}.json`))
+          } catch (error) {
+            console.error(error)
+          }
+
+          delete object[filedata[1]][filedata[2]]
+        
+          try {
+            fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
           } catch (error) {
             console.error(error)
           }
