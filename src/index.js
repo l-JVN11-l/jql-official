@@ -1,5 +1,7 @@
 const fs = require('fs')
 
+const createId = text => { return btoa(text) }
+
 class DLang {
   constructor(code) {
     this.lines = code.split('\n')
@@ -44,6 +46,9 @@ class DLang {
         let printCondition_ = (currFunction_ === 'print' && testingUtils_ === true)
         let dbCreateUnsafeCondition_ = (currFunction_ === 'createUnsafeDB' && databaseUtils_ === true)
         let dbAddDocUnsafeCondition_ = (currFunction_ === 'createDocument' && databaseUtils_ === true)
+        let dbAddPropertyUnsafeCondition_ = (currFunction_ === 'createProperty' && databaseUtils_ === true)
+        let dbRemoveDocUnsafeCondition_ = (currFunction_ === 'removeDocument' && databaseUtils_ === true)
+        let dbRemove_ = (currFunction_ === 'removeDB' && databaseUtils_ === true)
         
         if (printCondition_) {
           // print condition
@@ -103,9 +108,17 @@ class DLang {
           if (filenameChecker(text)) {
             throw TypeError('Unallowed letter in the given file name.')
           } else {
-            fs.writeFile(`unsafeDb/${text}.json`, '{}', err => {
-              if (err) throw err
-            })
+            // fs.writeFile(`unsafeDb/${text}.json`, ), err => {
+            //   if (err) throw err
+            // })
+
+            try {
+              fs.writeFileSync(`unsafeDb/${text}.json`, JSON.stringify({
+                id: createId(text)
+              }))
+            } catch (error) {
+              console.error(error)
+            }
           }
         }
 
@@ -119,6 +132,12 @@ class DLang {
             this.noHandler()
           }
 
+          if (variables[filedata[1]]) {
+            filedata[1] = variables[filedata[1]]
+          } else {
+            this.noHandler()
+          }
+
           try {
             object = JSON.parse(fs.readFileSync(`unsafeDb/${filedata[0]}.json`))
           } catch (error) {
@@ -127,6 +146,91 @@ class DLang {
 
           object[filedata[1]] = {}
           fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
+        }
+
+        if (dbAddPropertyUnsafeCondition_) {
+          let filedata = text.split(', ')
+          let object
+
+          if (variables[filedata[0]]) {
+            filedata[0] = variables[filedata[0]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[1]]) {
+            filedata[1] = variables[filedata[1]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[2]]) {
+            filedata[2] = variables[filedata[2]]
+          } else {
+            this.noHandler()
+          }
+
+          try {
+            object = JSON.parse(fs.readFileSync(`unsafeDb/${filedata[0]}.json`))
+          } catch (error) {
+            console.error(error)
+          }
+
+          const object2 = {}
+          object2[filedata[2]] = filedata[3]
+
+          object[filedata[1]] = object2
+
+          Object.assign(object[filedata[1]], object2)
+
+          try {
+            fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
+          } catch (error) {
+            console.error(error)
+          }
+        }
+
+        if (dbRemoveDocUnsafeCondition_) {
+          let filedata = text.split(', ')
+          let object
+
+          if (variables[filedata[0]]) {
+            filedata[0] = variables[filedata[0]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[1]]) {
+            filedata[1] = variables[filedata[1]]
+          } else {
+            this.noHandler()
+          }
+
+          try {
+            object = JSON.parse(fs.readFileSync(`unsafeDb/${filedata[0]}.json`))
+          } catch (error) {
+            console.error(error)
+          }
+
+          delete object[filedata[1]]
+          
+          fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
+        }
+
+        if (dbRemove_) {
+          let filedata = text.split(', ')
+
+          if (variables[filedata[0]]) {
+            filedata[0] = variables[filedata[0]]
+          } else {
+            this.noHandler()
+          }
+
+          try {
+            fs.unlinkSync(`unsafeDb/${filedata[0]}.json`)
+          } catch (error) {
+            console.error(error)
+          }
         }
       }
 

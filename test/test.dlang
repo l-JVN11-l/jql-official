@@ -1,6 +1,10 @@
 import 'dl:main/database.dlang'
 
-var dbname = 'dog'
+var dbname = 'cat'
+var omghi = 'dog'
 
-// createUnsafeDB(dbname)
+createUnsafeDB(dbname)
 createDocument(dbname, 'helo!')
+createProperty(dbname, 'helo!', omghi, 'does this work/')
+createProperty(dbname, 'bibi!', omghi, 'does this work also\')
+removeDocument(dbname, 'bibi!')
