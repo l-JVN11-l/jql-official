@@ -44,12 +44,17 @@ class DLang {
   
         // function conditions
         let printCondition_ = (currFunction_ === 'print' && testingUtils_ === true)
+
         let dbCreateUnsafeCondition_ = (currFunction_ === 'createUnsafeDB' && databaseUtils_ === true)
         let dbAddDocUnsafeCondition_ = (currFunction_ === 'createDocument' && databaseUtils_ === true)
         let dbAddPropertyUnsafeCondition_ = (currFunction_ === 'createProperty' && databaseUtils_ === true)
         let dbRemoveDocUnsafeCondition_ = (currFunction_ === 'removeDocument' && databaseUtils_ === true)
         let dbRemove_ = (currFunction_ === 'removeDB' && databaseUtils_ === true)
         let dbRemovePropertyUnsafeCondition_ = (currFunction_ === 'removeProperty' && databaseUtils_ === true)
+        let dbRenameDocUnsafeCondition_ = (currFunction_ === 'renameDocument' && databaseUtils_ === true)
+        let dbRenamePropertyUnsafeCondition_ = (currFunction_ === 'renameProperty' && databaseUtils_ === true)
+
+        // TODO: changeProperty, getProperty, getDocument
         
         if (printCondition_) {
           // print condition
@@ -264,6 +269,96 @@ class DLang {
 
           delete object[filedata[1]][filedata[2]]
         
+          try {
+            fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
+          } catch (error) {
+            console.error(error)
+          }
+        }
+
+        if (dbRenameDocUnsafeCondition_) {
+          let filedata = text.split(', ') || text.split(',')
+          let object
+
+          if (variables[filedata[0]]) {
+            filedata[0] = variables[filedata[0]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[1]]) {
+            filedata[1] = variables[filedata[1]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[2]]) {
+            filedata[2] = variables[filedata[2]]
+          } else {
+            this.noHandler()
+          }
+
+          try {
+            object = JSON.parse(fs.readFileSync(`unsafeDb/${filedata[0]}.json`))
+          } catch (error) {
+            console.error(error)
+          }
+
+          let currVal = object[filedata[1]]
+          delete object[filedata[1]]
+
+          object[filedata[2]] = currVal
+          
+          try {
+            fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
+          } catch (error) {
+            console.error(error)
+          }
+        }
+
+        if (dbRenamePropertyUnsafeCondition_) {
+          let filedata = text.split(', ') || text.split(',')
+          let object
+
+          if (variables[filedata[0]]) {
+            filedata[0] = variables[filedata[0]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[1]]) {
+            filedata[1] = variables[filedata[1]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[2]]) {
+            filedata[2] = variables[filedata[2]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[3]]) {
+            filedata[3] = variables[filedata[3]]
+          } else {
+            this.noHandler()
+          }
+
+          try {
+            object = JSON.parse(fs.readFileSync(`unsafeDb/${filedata[0]}.json`))
+          } catch (error) {
+            console.error(error)
+          }
+
+          let currVal = object[filedata[1]][filedata[2]]
+          delete object[filedata[1]][filedata[2]]
+
+          let obj =  { }
+          obj[filedata[3]] = currVal
+
+          Object.assign(object[filedata[1]], obj)
+          
+          
           try {
             fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
           } catch (error) {
