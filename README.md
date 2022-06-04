@@ -22,6 +22,12 @@ print('Hello!')
 
 ---------------------------------------
 
+## Ultimate Goal
+
+Goal: Make a programming language with no installed dependencies (currently uses `fs` from `Node.JS`)!
+
+Currently it is working!
+
 ## What I did/didn't do
 
 What I did:
@@ -32,5 +38,5 @@ What I did:
 - create document (`JSON` property)
 
 What I need to do:
-- delete document/properties
 - update document/properties
+- read document/properties
