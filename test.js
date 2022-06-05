@@ -1,5 +1,5 @@
 const fs = require('fs')
-const DLang = require('./dist/dlang.min.js')
+const DLang = require('./src/index')
 
 fs.readFile('./test/test.dlang', 'utf8', (err, data) => {
   if (err) {

@@ -53,8 +53,9 @@ class DLang {
         let dbRemovePropertyUnsafeCondition_ = (currFunction_ === 'removeProperty' && databaseUtils_ === true)
         let dbRenameDocUnsafeCondition_ = (currFunction_ === 'renameDocument' && databaseUtils_ === true)
         let dbRenamePropertyUnsafeCondition_ = (currFunction_ === 'renameProperty' && databaseUtils_ === true)
+        let dbChangePropertyUnsafeCondition_ = (currFunction_ === 'changeProperty' && databaseUtils_ === true)
 
-        // TODO: changeProperty, getProperty, getDocument
+        // TODO: getProperty, getDocument
         
         if (printCondition_) {
           // print condition
@@ -359,6 +360,49 @@ class DLang {
           Object.assign(object[filedata[1]], obj)
           
           
+          try {
+            fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
+          } catch (error) {
+            console.error(error)
+          }
+        }
+
+        if (dbChangePropertyUnsafeCondition_) {
+          let filedata = text.split(', ') || text.split(',')
+          let object
+
+          if (variables[filedata[0]]) {
+            filedata[0] = variables[filedata[0]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[1]]) {
+            filedata[1] = variables[filedata[1]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[2]]) {
+            filedata[2] = variables[filedata[2]]
+          } else {
+            this.noHandler()
+          }
+
+          if (variables[filedata[3]]) {
+            filedata[3] = variables[filedata[3]]
+          } else {
+            this.noHandler()
+          }
+
+          try {
+            object = JSON.parse(fs.readFileSync(`unsafeDb/${filedata[0]}.json`))
+          } catch (error) {
+            console.error(error)
+          }
+
+          object[filedata[1]][filedata[2]] = filedata[3]
+
           try {
             fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
           } catch (error) {
