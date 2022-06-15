@@ -1,6 +1,8 @@
-# DLang
+# JQL
 
-The **D**umbest **Lang**uage on Earth!
+**J**avascript **Q**uery **L**anguage
+
+Querying, in JavaScript style B)
 
 ---------------------------------------
 
@@ -9,20 +11,33 @@ This is just a project I decided to take up. Nothin special.
 ---------------------------------------
 
 ## What it is:
-DLang (Dumb Language) is a language that is currently under development and is basically SQL in JavaScript syntax! :D
+JQL is a language that is currently under development and is basically SQL in JavaScript syntax! :D
 
-Example:
+## Examples
+
+Print "Hello World!":
+
 ```
-import 'dl:main/base.dlang'
+import 'jql:main/base.jql'
 // Get's the print() function, which is not built in (since it is a database language)
 
-print('Hello!')
-//=> Hello!
+print('Hello World!')
+//=> Hello World!
+```
+
+Create DB & Create Document
+```
+import 'jql:main/database.jql'
+
+createDb('dogs')
+createDocument('dogs', 'dog1')
 ```
 
 ---------------------------------------
 
 ## What I did/didn't do
+
+**83% done!**
 
 What I did:
 - `print()` function.
