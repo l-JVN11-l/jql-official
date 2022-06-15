@@ -1,5 +1,5 @@
-import 'dl:main/database.jql'
-import 'dl:main/base.jql'
+import 'jql:main/database.jql'
+import 'jql:main/base.jql'
 
 var dbname = 'cat'
 var omghi = 'dog'

@@ -44,12 +44,12 @@ class DLang {
 
     for (let i = 0; i < lines.length; i++) {
       // testing utils import test
-      if (lines[i] === 'import \'dl:main/base.jql\'') {
+      if (lines[i] === 'import \'jql:main/base.jql\'') {
         testingUtils_ = true
       }
 
       // database utils import test
-      if (lines[i] === 'import \'dl:main/database.jql\'') {
+      if (lines[i] === 'import \'jql:main/database.jql\'') {
         databaseUtils_ = true
       }
 
