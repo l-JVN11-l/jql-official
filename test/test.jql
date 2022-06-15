@@ -1,0 +1,12 @@
+import 'dl:main/database.jql'
+import 'dl:main/base.jql'
+
+var dbname = 'cat'
+var omghi = 'dog'
+
+createUnsafeDB(dbname)
+createDocument(dbname, 'heysup')
+createProperty(dbname, 'heysup', 'hello!', 'B)')
+
+var example = getDocument(dbname, 'heysup')
+print(example)

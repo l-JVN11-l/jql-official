@@ -1,7 +1,7 @@
 const fs = require('fs')
 const DLang = require('./src/index')
 
-fs.readFile('./test/test.dlang', 'utf8', (err, data) => {
+fs.readFile('./test/test.jql', 'utf8', (err, data) => {
   if (err) {
     console.error(err);
     return;

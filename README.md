@@ -32,4 +32,4 @@ What I did:
 - create document (`JSON` property)
 
 What I need to do:
-- read document/properties
+- read properties
