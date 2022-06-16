@@ -39,7 +39,7 @@ createDocument('dogs', 'dog1')
 
 ## What I did/didn't do
 
-**83% done!**
+**87% done!**
 
 What I did:
 - `print()` function.
@@ -48,3 +48,7 @@ What I did:
 - create database
 - create document (`JSON` property)
 - read properties/documents/database
+- delete properties/documents/database
+
+What I need to do:
+- update properties/documents/database
