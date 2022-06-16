@@ -7,6 +7,13 @@ var omghi = 'dog'
 createUnsafeDB(dbname)
 createDocument(dbname, 'heysup')
 createProperty(dbname, 'heysup', 'hello!', 'B)')
+getDb(dbname)
 
 var example = getDocument(dbname, 'heysup')
-print(example)
+// print(example)
+
+var currDb = getDb(dbname)
+// print(currDb)
+
+var prop = getProperty(dbname, 'heysup', 'hello!')
+print(prop)

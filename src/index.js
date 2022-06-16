@@ -36,6 +36,60 @@ class DLang {
     }
   }
 
+  dbGetDbUnsafeConditionRunner_(params, variables, returnCode) {
+    let filedata = params
+    let object
+
+    if (variables[filedata[0]]) {
+      filedata[0] = variables[filedata[0]]
+    } else {
+      this.noHandler()
+    }
+
+    try {
+      object = JSON.parse(fs.readFileSync(`unsafeDb/${filedata[0]}.json`))
+    } catch (error) {
+      console.error(error)
+    }
+
+    if (returnCode) {
+      return object
+    }
+  }
+
+  dbGetPropUnsafeConditionRunner_(params, variables, returnCode) {
+    let filedata = params
+    let object
+
+    if (variables[filedata[0]]) {
+      filedata[0] = variables[filedata[0]]
+    } else {
+      this.noHandler()
+    }
+
+    if (variables[filedata[1]]) {
+      filedata[1] = variables[filedata[1]]
+    } else {
+      this.noHandler()
+    }
+
+    if (variables[filedata[2]]) {
+      filedata[2] = variables[filedata[2]]
+    } else {
+      this.noHandler()
+    }
+
+    try {
+      object = JSON.parse(fs.readFileSync(`unsafeDb/${filedata[0]}.json`))[filedata[1]][filedata[2]]
+    } catch (error) {
+      console.error(error)
+    }
+
+    if (returnCode) {
+      return object
+    }
+  }
+
   run() {
     let lines = this.lines
     let testingUtils_ = false
@@ -43,6 +97,12 @@ class DLang {
     let variables = {}
 
     for (let i = 0; i < lines.length; i++) {
+      // comments (like this one!)
+      if (lines[i].includes('//', 0)) {
+        this.noHandler()
+        continue
+      }
+
       // testing utils import test
       if (lines[i] === 'import \'jql:main/base.jql\'') {
         testingUtils_ = true
@@ -51,6 +111,127 @@ class DLang {
       // database utils import test
       if (lines[i] === 'import \'jql:main/database.jql\'') {
         databaseUtils_ = true
+      }
+
+      // variables
+      if (lines[i].includes('var', 0)) {
+        let final_
+        let inlineFunctions_ = [
+          'getDocument',
+          'getDb',
+          'getProperty'
+        ]
+
+        final_ = lines[i]
+                      .replace('var', '')
+                      .replace('=', '')
+                      .trim()
+                      .split('\'')
+
+        if (!lines[i].split('\'')[0].includes('(')) {
+          variables[final_[0].trim()] = final_[1]
+        } else {
+          let newLine = lines[i]
+                        .replace('var', '')
+                        .replace('=', '')
+                        .trim()
+                        .split('\'')
+
+          let functionName = newLine[0].split('(')[0].split(' ')[2]
+          let variableName = newLine[0].split(' ')[0].trim()
+          let params = []
+
+          if (inlineFunctions_.find(el => el === functionName) && functionName === 'getDocument') {
+            for (let i = 0; i < newLine.length; i++) {
+              if (newLine[i].includes('(')) {
+                var bit = newLine[i].split('(')[1].replace(',','').trim()
+                if (!bit.includes('\'')) {
+                  if (variables[bit]) {
+                    params.push(variables[bit])
+                  } else {
+                    throw new ReferenceError(`${bit} is not defined.`)
+                  }
+                } else {
+                  params.push(bit)
+                }
+              } else if (!newLine[i].includes('\'')) {
+                if (variables[newLine[i]]) {
+                  params.push(variables[bit])
+                } else if (newLine[i] === ')') {
+                  // bad :(
+                } else {
+                  params.push(newLine[i])
+                }
+              } else {
+                throw new ReferenceError(`${newLine[i]} is not defined.`)
+              }
+            }
+
+            variables[variableName] = this.dbGetDocUnsafeConditionRunner_(params, variables, true)
+          } else if (inlineFunctions_.find(el => el === functionName) && functionName === 'getDb') {
+            for (let i = 0; i < newLine.length; i++) {
+              if (newLine[i].includes('(')) {
+                var bit = newLine[i].split('(')[1].replace(',','').replace(')','').trim()
+                if (!bit.includes('\'')) {
+                  if (variables[bit]) {
+                    params.push(variables[bit])
+                  } else {
+                    throw new ReferenceError(`${bit} is not defined.`)
+                  }
+                } else {
+                  params.push(bit)
+                }
+              } else if (!newLine[i].includes('\'')) {
+                if (variables[newLine[i]]) {
+                  params.push(variables[bit])
+                } else if (newLine[i] === ')') {
+                  // bad :(
+                } else {
+                  params.push(newLine[i])
+                }
+              } else {
+                throw new ReferenceError(`${newLine[i]} is not defined.`)
+              }
+            }
+
+            variables[variableName] = this.dbGetDbUnsafeConditionRunner_(params, variables, true)
+          } else if (inlineFunctions_.find(el => el === functionName) && functionName === 'getProperty') {
+            for (let i = 0; i < newLine.length; i++) {
+              if (newLine[i].includes('(')) {
+                var bit = newLine[i].split('(')[1].replace(',','').replace(')','').trim()
+                if (!bit.includes('\'')) {
+                  if (variables[bit]) {
+                    params.push(variables[bit])
+                  } else {
+                    throw new ReferenceError(`${bit} is not defined.`)
+                  }
+                } else {
+                  params.push(bit)
+                }
+              } else if (!newLine[i].includes('\'')) {
+                if (variables[newLine[i]]) {
+                  params.push(variables[bit])
+                } else if (newLine[i] === ')') {
+                  // bad :(
+                } else {
+                  params.push(newLine[i])
+                }
+              } else {
+                throw new Error(`${newLine[i]} is not defined.`)
+              }
+            }
+
+            params = params.filter(value => {
+              return value != ', '
+            })
+
+            variables[variableName] = this.dbGetPropUnsafeConditionRunner_(params, variables, true)
+          } else {
+            throw new Error(`${functionName} is not defined.`)
+          }
+        }
+
+        continue
       }
 
       // functions
@@ -82,13 +263,16 @@ class DLang {
         let dbRenamePropertyUnsafeCondition_ = (currFunction_ === 'renameProperty' && databaseUtils_ === true)
         let dbChangePropertyUnsafeCondition_ = (currFunction_ === 'changeProperty' && databaseUtils_ === true)
         let dbGetDocUnsafeCondition_ = (currFunction_ === 'getDocument' && databaseUtils_ === true)
+        let dbGetDbUnsafeCondition_ = (currFunction_ === 'getDb' && databaseUtils_ === true)
+        let dbGetPropUnsafeCondition_ = (currFunction_ === 'getProperty' && databaseUtils_ === true)
 
         // TODO: getProperty
         
         if (printCondition_) {
           // print condition
           if (text === undefined) {
-            console.error(`${value} is not defined.`)
+            // throw new ReferenceError(`${value} is not defined.`)
+            console.log(`${value} is not defined.`)
           } else {
             console.log(text)
           }
@@ -155,9 +339,7 @@ class DLang {
               console.error(error)
             }
           }
-        }
-
-        if (dbAddDocUnsafeCondition_) {
+        } else if (dbAddDocUnsafeCondition_) {
           let filedata = text.split(', ') || text.split(',')
           let object
 
@@ -181,9 +363,7 @@ class DLang {
 
           object[filedata[1]] = {}
           fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
-        }
-
-        if (dbAddPropertyUnsafeCondition_) {
+        } else if (dbAddPropertyUnsafeCondition_) {
           let filedata = text.split(', ')
           let object
 
@@ -223,9 +403,7 @@ class DLang {
           } catch (error) {
             console.error(error)
           }
-        }
-
-        if (dbRemoveDocUnsafeCondition_) {
+        } else if (dbRemoveDocUnsafeCondition_) {
           let filedata = text.split(', ')
           let object
 
@@ -250,9 +428,7 @@ class DLang {
           delete object[filedata[1]]
           
           fs.writeFileSync(`unsafeDb/${filedata[0]}.json`, JSON.stringify(object))
-        }
-
-        if (dbRemove_) {
+        } else if (dbRemove_) {
           let filedata = text.split(', ')
 
           if (variables[filedata[0]]) {
@@ -266,9 +442,7 @@ class DLang {
           } catch (error) {
             console.error(error)
           }
-        }
-
-        if (dbRemovePropertyUnsafeCondition_) {
+        } else if (dbRemovePropertyUnsafeCondition_) {
           let filedata = text.split(', ')
           let object
 
@@ -303,9 +477,7 @@ class DLang {
           } catch (error) {
             console.error(error)
           }
-        }
-
-        if (dbRenameDocUnsafeCondition_) {
+        } else if (dbRenameDocUnsafeCondition_) {
           let filedata = text.split(', ') || text.split(',')
           let object
 
@@ -343,9 +515,7 @@ class DLang {
           } catch (error) {
             console.error(error)
           }
-        }
-
-        if (dbRenamePropertyUnsafeCondition_) {
+        } else if (dbRenamePropertyUnsafeCondition_) {
           let filedata = text.split(', ') || text.split(',')
           let object
 
@@ -393,9 +563,7 @@ class DLang {
           } catch (error) {
             console.error(error)
           }
-        }
-
-        if (dbChangePropertyUnsafeCondition_) {
+        } else if (dbChangePropertyUnsafeCondition_) {
           let filedata = text.split(', ') || text.split(',')
           let object
 
@@ -436,75 +604,15 @@ class DLang {
           } catch (error) {
             console.error(error)
           }
-        }
-
-        if (dbGetDocUnsafeCondition_) {
+        } else if (dbGetDocUnsafeCondition_) {
           this.dbGetDocUnsafeConditionRunner_(text.split(', ') || text.split(','), variables, false)
-        }
-      }
-
-      // variables
-      if (lines[i].includes('var', 0)) {
-        let final_
-        let inlineFunctions_ = [
-          'getDocument'
-        ]
-
-        final_ = lines[i]
-                      .replace('var', '')
-                      .replace('=', '')
-                      .trim()
-                      .split('\'')
-
-        if (!lines[i].split('\'')[0].includes('(')) {
-          variables[final_[0].trim()] = final_[1]
+        } else if (dbGetDbUnsafeCondition_) {
+          this.dbGetDbUnsafeConditionRunner_(text.split(', ') || text.split(','), variables, false)
+        } else if (dbGetPropUnsafeCondition_) {
+          this.dbGetPropUnsafeConditionRunner_(text.split(', ') || text.split(','), variables, false)
         } else {
-          let newLine = lines[i]
-                        .replace('var', '')
-                        .replace('=', '')
-                        .trim()
-                        .split('\'')
-
-          let functionName = newLine[0].split('(')[0].split(' ')[2]
-          let variableName = newLine[0].split(' ')[0].trim()
-          let params = []
-
-          if (inlineFunctions_.find(el => el === functionName)) {
-            for (let i = 0; i < newLine.length; i++) {
-              if (newLine[i].includes('(')) {
-                var bit = newLine[i].split('(')[1].replace(',','').trim()
-                if (!bit.includes('\'')) {
-                  if (variables[bit]) {
-                    params.push(variables[bit])
-                  } else {
-                    throw new ReferenceError(`${bit} is not defined.`)
-                  }
-                } else {
-                  params.push(bit)
-                }
-              } else if (!newLine[i].includes('\'')) {
-                if (variables[newLine[i]]) {
-                  params.push(variables[bit])
-                } else if (newLine[i] === ')') {
-                  // bad :(
-                } else {
-                  params.push(newLine[i])
-                }
-              } else {
-                throw new ReferenceError(`${newLine[i]} is not defined.`)
-              }
-            }
-          } else {
-            throw new Error(`${functionName} is not defined.`)
-          }
-
-          variables[variableName] = this.dbGetDocUnsafeConditionRunner_(params, variables, true)
+          throw new Error(`${currFunction_} is not defined.`)
         }
-      }
-
-      // comments (like this one!)
-      if (lines[i].includes('//', 0)) {
-        this.noHandler()
       }
     }
   }

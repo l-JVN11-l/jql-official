@@ -45,6 +45,4 @@ What I did:
 - variables
 - create database
 - create document (`JSON` property)
-
-What I need to do:
-- read properties
+- read properties/documents/database
