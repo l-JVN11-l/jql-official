@@ -8,6 +8,8 @@ Querying, in JavaScript style B)
 
 This is just a project I decided to take up. Nothin special.
 
+**620+ FRICKIN LINES OF CODE :O**
+
 ---------------------------------------
 
 ## What it is:
