@@ -1,2 +1,4 @@
 test/
 unsafeDb/
+src/
+test.js

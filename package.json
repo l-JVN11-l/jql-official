@@ -1,6 +1,6 @@
 {
   "name": "jql-lang",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Querying in Javascript.",
   "main": "dist/dlang.min.js",
   "scripts": {
@@ -13,5 +13,8 @@
     "dlang programming language"
   ],
   "author": "jvn11",
-  "license": "MIT"
+  "license": "MIT",
+  "bin": {
+    "jql": "./cli.js"
+  }
 }
