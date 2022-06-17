@@ -1,12 +1,17 @@
 {
-  "name": "dlang_source_code",
+  "name": "jql-lang",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Querying in Javascript.",
+  "main": "dist/dlang.min.js",
   "scripts": {
     "minify": "minify src/index.js > dist/dlang.min.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "dlang",
+    "programming language",
+    "jvn11",
+    "dlang programming language"
+  ],
+  "author": "jvn11",
+  "license": "MIT"
 }
