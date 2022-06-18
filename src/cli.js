@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const [,, ...args] = process.argv
 const fs = require('fs')
-const JQL = require('../dist/dlang.min.js')
+const JQL = require('../dist/jql.min.js')
 
 fs.readFile(args[0], 'utf8', (err, data) => {
   if (err) {
