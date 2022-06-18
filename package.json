@@ -2,9 +2,10 @@
   "name": "jql-lang",
   "version": "1.1.0",
   "description": "Querying in Javascript.",
-  "main": "dist/dlang.min.js",
+  "main": "dist/jql.min.js",
   "scripts": {
-    "minify": "minify src/index.js > dist/dlang.min.js"
+    "minifymain": "minify src/index.js > dist/jql.min.js",
+    "minifycli": "minify src/cli.js > dist/cli.min.js"
   },
   "keywords": [
     "dlang",
@@ -15,6 +16,6 @@
   "author": "jvn11",
   "license": "MIT",
   "bin": {
-    "jql": "./cli.js"
+    "jql": "./dist/cli.min.js"
   }
 }
